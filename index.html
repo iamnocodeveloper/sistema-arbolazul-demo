@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centro Infantil El Árbol Azul · Sistema de gestión (demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#103b66; --navy2:#17518c; --ink:#1d2433; --gray:#5b6577; --line:#e3e7ee;
+  --bg:#f2f6fb; --card:#ffffff; --amber:#f0a92c; --amber-soft:#fef4df;
+  --ok:#1f8a5b; --warn:#c9762a; --cold:#7a8496; --blue:#2f6fb0;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.01em}
+a{color:var(--blue);text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+/* Sidebar */
+.side{background:var(--navy);color:#dbe3f0;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand .logo{display:flex;align-items:center;gap:10px}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--amber),#cf8b12);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.brand .mark svg{width:20px;height:20px}
+.brand b{font-size:15px;color:#fff;font-weight:700;letter-spacing:-.02em;display:block}
+.brand small{font-size:11px;color:#8ea0bd;text-transform:uppercase;letter-spacing:.09em}
+.nav{padding:10px 10px;display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:11px;background:none;border:0;color:#b9c6dc;padding:10px 12px;border-radius:9px;font-size:14px;text-align:left;width:100%}
+.nav button svg{width:18px;height:18px;flex:0 0 auto;opacity:.9}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button.active{background:var(--navy2);color:#fff;box-shadow:inset 3px 0 0 var(--amber)}
+.nav .sep{margin:8px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.side .foot{margin-top:auto;padding:14px 16px;font-size:11px;color:#7d8fae;border-top:1px solid rgba(255,255,255,.08)}
+/* Main */
+.main{min-width:0;display:flex;flex-direction:column}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:14px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+.top .who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray)}
+.av{width:32px;height:32px;border-radius:50%;background:var(--navy2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.content{padding:22px;max-width:1180px;width:100%;margin:0 auto}
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.page-title h2{font-size:21px}
+.page-title p{margin:3px 0 0;color:var(--gray);font-size:13px}
+.sec{display:none}
+.sec.on{display:block}
+/* Buttons */
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:9px 14px;font-size:13.5px;font-weight:500;display:inline-flex;align-items:center;gap:8px}
+.btn svg{width:16px;height:16px}
+.btn:hover{border-color:#c9d1de;background:#fbfcfe}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:var(--navy2)}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:#3a2a05;font-weight:600}
+.btn.amber:hover{background:#daa01f}
+.btn.sm{padding:6px 11px;font-size:12.5px}
+/* Cards */
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}
+.card .hd{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card .hd h3{font-size:14px}
+.card .bd{padding:16px}
+.kpi{padding:16px 18px}
+.kpi .n{font-size:27px;font-weight:700;letter-spacing:-.02em}
+.kpi .l{font-size:12.5px;color:var(--gray);margin-top:2px}
+.kpi .t{font-size:11.5px;color:var(--amber);font-weight:600;margin-top:7px}
+.kpi .ico{float:right;width:34px;height:34px;border-radius:9px;background:var(--amber-soft);display:flex;align-items:center;justify-content:center}
+.kpi .ico svg{width:18px;height:18px;color:var(--warn)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.s-nueva{background:#eaf1fb;color:#2560a6}
+.s-contactada{background:#e9f2ff;color:#1d5fa8}
+.s-visita{background:#fef4df;color:#a06b0c}
+.s-admitida{background:#f4ecfd;color:#6c3bb0}
+.s-matriculada{background:#e6f5ee;color:#157a4e}
+.s-espera{background:#eef0f4;color:#5b6577}
+.s-aldia{background:#e6f5ee;color:#157a4e}
+.s-pvencer{background:#fef4df;color:#a06b0c}
+.s-vencido{background:#fdeaea;color:#b23b3b}
+.s-info{background:#e9f2ff;color:#1d5fa8}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+/* Table */
+.table-wrap{overflow-x:auto;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);font-weight:600;background:#fafbfd}
+tbody tr:hover{background:#fafbfd;cursor:pointer}
+/* Filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.input{position:relative;flex:1;min-width:180px}
+.input svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#98a2b3}
+.input input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;background:#fff}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--gray)}
+.chip.active{background:var(--navy);border-color:var(--navy);color:#fff}
+/* Embudo */
+.funnel{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.fn{border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px;min-width:0;cursor:pointer}
+.fn .c{font-size:22px;font-weight:700}
+.fn .t{font-size:11.5px;color:var(--gray);margin-top:2px}
+.fn .bar{height:6px;border-radius:4px;margin-top:10px;background:#eef1f6;overflow:hidden}
+.fn .bar i{display:block;height:100%;border-radius:4px;background:var(--amber)}
+/* ficha */
+.info-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.info-row:last-child{border-bottom:0}
+.info-row .k{color:var(--gray)}
+.info-row .v{font-weight:600;text-align:right}
+.chat{display:flex;flex-direction:column;gap:10px}
+.bub{max-width:82%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.4}
+.bub.in{background:#eef1f6;color:var(--ink);border-bottom-left-radius:3px}
+.bub.out{background:#dcf2e4;color:#14432c;align-self:flex-end;border-bottom-right-radius:3px}
+.bub .tm{font-size:10.5px;color:#7a8496;margin-top:4px}
+.doc-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.doc-row:last-child{border-bottom:0}
+.doc-ic{width:20px;height:20px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.doc-ok{background:#e6f5ee;color:var(--ok)}
+.doc-pend{background:#fdeaea;color:#b23b3b}
+.doc-ic svg{width:12px;height:12px}
+.check{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:13.5px}
+.check input{width:18px;height:18px;accent-color:var(--navy)}
+/* Pagos */
+.pay-row{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);align-items:center;flex-wrap:wrap}
+.pay-row:last-child{border-bottom:0}
+.pay-row .nm{flex:1;min-width:160px}
+.pay-row .nm b{display:block;font-size:13.5px}
+.pay-row .nm span{font-size:12px;color:var(--gray)}
+.pay-amt{font-weight:700;font-size:14px;min-width:88px}
+.pay-vence{font-size:12.5px;color:var(--gray);min-width:110px}
+/* Asistencia */
+.asis-sala{margin-bottom:18px}
+.asis-sala:last-child{margin-bottom:0}
+.asis-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:2px solid var(--line);margin-bottom:6px}
+.asis-head b{font-size:13.5px}
+.asis-head span{font-size:12px;color:var(--gray)}
+.asis-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;flex-wrap:wrap}
+.asis-row:last-child{border-bottom:0}
+.asis-row .nm{flex:1;min-width:140px}
+.tgl{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex:0 0 auto}
+.tgl button{border:0;background:#fff;padding:6px 11px;font-size:12.5px;color:var(--gray)}
+.tgl button.on{background:var(--ok);color:#fff;font-weight:600}
+.tgl button.off{background:#b23b3b;color:#fff;font-weight:600}
+.tgl button:first-child{border-right:1px solid var(--line)}
+/* Comunicados */
+.com-item{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.com-item:last-child{border-bottom:0}
+.com-ic{width:30px;height:30px;border-radius:8px;background:#fafbfd;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.com-ic svg{width:16px;height:16px;color:var(--blue)}
+/* WhatsApp mock */
+.wa{background:#e7ded4;border-radius:14px;padding:14px;background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1px);background-size:14px 14px}
+.wa .phone{background:#075e54;color:#fff;border-radius:10px 10px 0 0;padding:9px 12px;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.wa .thread{background:#efe7dd;padding:14px 10px;border-radius:0 0 10px 10px;min-height:120px}
+.wa .msg{background:#fff;max-width:88%;padding:8px 11px;border-radius:10px;font-size:13px;box-shadow:0 1px 1px rgba(0,0,0,.08);margin-bottom:9px;position:relative;white-space:pre-wrap}
+.wa .msg .tm{font-size:10px;color:#8b9199;text-align:right;margin-top:3px}
+.wa .msg.out{background:#dcf8c6;margin-left:auto}
+.toggle{width:46px;height:26px;border-radius:999px;background:#cdd5e0;border:0;position:relative;transition:.2s;flex:0 0 auto}
+.toggle i{position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.toggle.on{background:var(--ok)}
+.toggle.on i{left:23px}
+/* charts */
+.chart{display:flex;align-items:flex-end;gap:12px;height:180px;padding-top:10px}
+.chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.chart .bar{width:100%;max-width:46px;background:linear-gradient(180deg,var(--blue),#1f4d80);border-radius:6px 6px 0 0;transition:.3s}
+.chart .cl{font-size:11px;color:var(--gray)}
+.hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px}
+.hbar-row .lb{width:112px;flex:0 0 auto;color:var(--ink)}
+.hbar-row .tr{flex:1;background:#eef1f6;border-radius:6px;height:20px;overflow:hidden}
+.hbar-row .tr i{display:block;height:100%;background:var(--amber);border-radius:6px}
+.hbar-row .vl{width:52px;text-align:right;font-weight:600;color:var(--gray)}
+/* public page */
+.pub{background:#fff}
+.pub .hero{background:linear-gradient(135deg,var(--navy),#245a92);color:#fff;padding:34px 22px}
+.pub .hero h1{font-size:26px}
+.pub .hero p{color:#c7d3e8;margin:8px 0 0;font-size:14px;max-width:640px}
+.pub-wrap{padding:22px;max-width:1180px;margin:0 auto}
+.modal{position:fixed;inset:0;background:rgba(16,24,40,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:60}
+.modal.on{display:flex}
+.modal .box{background:#fff;border-radius:16px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:22px}
+label.f{display:block;font-size:12.5px;font-weight:600;color:var(--gray);margin:12px 0 5px}
+input.f,select.f,textarea.f{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13.5px;font-family:inherit}
+.note{background:#fafbfd;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12.5px;color:var(--gray)}
+.sala-card{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+.sala-card .ic{width:40px;height:40px;border-radius:10px;background:#e9f2ff;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.sala-card .ic svg{width:22px;height:22px;color:var(--blue)}
+.sala-card b{font-size:14.5px}
+.sala-card .r{font-size:12.5px;color:var(--gray);margin-top:2px}
+/* welcome */
+.welcome{position:fixed;inset:0;background:linear-gradient(140deg,#0b2a4a,#103b66 55%,#17518c);color:#fff;display:flex;align-items:center;justify-content:center;padding:22px;z-index:80;overflow:auto}
+.welcome .in{max-width:500px;text-align:center}
+.welcome .mark{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--amber),#cf8b12);display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.welcome .mark svg{width:34px;height:34px}
+.welcome h1{font-size:25px;color:#fff}
+.welcome p{color:#b9c6dc;margin:10px 0 22px;font-size:14px}
+.welcome .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.welcome .tag{display:inline-block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:10px}
+.welcome .legal{margin-top:26px;font-size:11.5px;color:#7d8fae}
+/* tour */
+.tour-dim{position:fixed;inset:0;background:transparent;z-index:90;pointer-events:none}
+.tour-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(9,16,28,.72),0 0 0 3px var(--amber);z-index:91;pointer-events:none;transition:all .28s ease}
+.tour-card{position:fixed;z-index:92;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.35);max-width:380px;width:calc(100% - 28px);padding:18px}
+.tour-card .step{font-size:11.5px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.08em}
+.tour-card h3{font-size:16.5px;margin:7px 0 8px;color:var(--navy)}
+.tour-card p{margin:0;font-size:13.5px;color:var(--gray)}
+.tour-card .navrow{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tour-card .navrow .sp{flex:1}
+.tour-card .prog{height:4px;border-radius:3px;background:#eef1f6;margin-top:14px;overflow:hidden;display:none}
+.tour-card .prog.on{display:block}
+.tour-card .prog i{display:block;height:100%;background:var(--amber);width:0}
+.tour-close{position:fixed;top:14px;right:14px;z-index:93;background:#fff;border:0;border-radius:999px;padding:9px 14px;font-size:13px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 18px;border-radius:10px;font-size:13px;z-index:120;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;transition:.25s;pointer-events:none}
+.toast.on{opacity:1}
+.foot-note{text-align:center;color:var(--gray);font-size:12px;padding:26px 16px;border-top:1px solid var(--line);margin-top:26px}
+/* responsive */
+@media(max-width:960px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .funnel{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:720px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;bottom:0;width:250px;transform:translateX(-100%);transition:.25s;z-index:70;height:100vh}
+  .side.open{transform:none}
+  .menu-btn{display:inline-flex!important}
+  .scrim{position:fixed;inset:0;background:rgba(9,16,28,.5);z-index:65;display:none}
+  .scrim.on{display:block}
+  .content{padding:16px}
+  .g4{grid-template-columns:1fr}
+  .funnel{grid-template-columns:repeat(2,1fr)}
+  .tour-card{max-width:none}
+  #crumb{display:none}
+  .top .who > span{display:none}
+  .top{padding:12px 16px}
+}
+.menu-btn{display:none;background:none;border:0;padding:6px}
+.menu-btn svg{width:22px;height:22px;color:var(--navy)}
+</style>
+</head>
+<body>
+
+<!-- ===== WELCOME / ENTRADA ===== -->
+<div class="welcome" id="welcome">
+  <div class="in">
+    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#3a2a05" stroke-width="1.7"><path d="M12 3v6"/><path d="M12 9c-3.5 0-6 1.6-6 4.2 0 2 1.4 3 3 3-.4 1.9.5 3.3 2 3.8"/><path d="M12 9c3.5 0 6 1.6 6 4.2 0 2-1.4 3-3 3 .4 1.9-.5 3.3-2 3.8"/><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/></svg></div>
+    <span class="tag">Demo de sistema de gestión</span>
+    <h1>Centro Infantil El Árbol Azul</h1>
+    <p>Ordene las inscripciones, los pagos, la asistencia y los avisos a las familias en un solo lugar. Cada solicitud se registra sola y el sistema avisa a los padres por WhatsApp. Este es un ejemplo navegable con datos ficticios.</p>
+    <div class="btns">
+      <button class="btn amber" onclick="enterApp()">Entrar al sistema</button>
+      <button class="btn" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff" onclick="enterApp();setTimeout(startTour,350)">Ver el recorrido guiado</button>
+    </div>
+    <div class="legal">Demo de referencia hecho por Nocodeveloper. Los datos son de ejemplo.</div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="toggleSide()"></div>
+
+<div class="app">
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="side" id="side">
+    <div class="brand">
+      <div class="logo">
+        <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="#3a2a05" stroke-width="1.7"><path d="M12 3v6"/><path d="M12 9c-3.5 0-6 1.6-6 4.2 0 2 1.4 3 3 3-.4 1.9.5 3.3 2 3.8"/><path d="M12 9c3.5 0 6 1.6 6 4.2 0 2-1.4 3-3 3 .4 1.9-.5 3.3-2 3.8"/><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="6" r="2.4"/></svg></div>
+        <div><b>El Árbol Azul</b><small>Centro Infantil · Costa Rica</small></div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-sec="panel" class="active" onclick="go('panel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Panel del día</button>
+      <button data-sec="inscripciones" onclick="go('inscripciones')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 13l2 2 4-4"/></svg>Inscripciones</button>
+      <button data-sec="pagos" onclick="go('pagos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Pagos</button>
+      <button data-sec="asistencia" onclick="go('asistencia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Asistencia</button>
+      <button data-sec="comunicados" onclick="go('comunicados')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/><path d="M8 11h8M8 14h5"/></svg>Comunicados</button>
+      <button data-sec="informes" onclick="go('informes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Informes</button>
+      <div class="sep"></div>
+      <button data-sec="web" onclick="go('web')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>Web pública</button>
+      <button onclick="startTour()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>Recorrido guiado</button>
+    </nav>
+    <div class="foot">Demo · datos de ejemplo<br>Hecho por Nocodeveloper</div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+    <header class="top">
+      <button class="menu-btn" onclick="toggleSide()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div id="crumb" style="font-size:13px;color:var(--gray)">Centro Infantil · Costa Rica</div>
+      <div class="who">
+        <button class="btn sm" id="btn-tour" onclick="startTour()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>Ver el recorrido guiado</button>
+        <span class="av">DL</span><span>Daniela López · Dirección</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== PANEL ===== -->
+      <section class="sec on" id="sec-panel">
+        <div class="page-title">
+          <div><h2>Panel del día</h2><p id="today-label">Resumen de la jornada</p></div>
+          <button class="btn primary" onclick="go('inscripciones')">Ver inscripciones</button>
+        </div>
+
+        <div class="grid g4" style="margin-bottom:14px">
+          <div class="card kpi" id="tour-nuevas"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg></div><div class="n" id="k-nuevas">0</div><div class="l">Solicitudes nuevas</div><div class="t">Entran solas desde la web y WhatsApp</div></div>
+          <div class="card kpi"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></div><div class="n" id="k-matricula">0</div><div class="l">Matrículas por confirmar</div><div class="t" id="k-matricula-t">admitidas con cupo reservado</div></div>
+          <div class="card kpi"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div><div class="n" id="k-pagos">0</div><div class="l">Pagos de la semana</div><div class="t" id="k-pagos-t"></div></div>
+          <div class="card kpi"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="n" id="k-asist">0</div><div class="l">Asistencia de hoy</div><div class="t" id="k-asist-t">presentes en las salas</div></div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <div class="hd"><h3>Avisos por enviar a los padres</h3><span class="pill s-visita"><span class="dot"></span>automáticos</span></div>
+            <div class="bd" id="avisos" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>Comunicados recientes</h3><button class="btn sm" onclick="go('comunicados')">Ver todos</button></div>
+            <div class="bd" id="panel-com"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== INSCRIPCIONES ===== -->
+      <section class="sec" id="sec-inscripciones">
+        <div class="page-title">
+          <div><h2>Inscripciones</h2><p>El corazón del sistema: cada niño, quién lo inscribe y en qué estado está su matrícula.</p></div>
+          <button class="btn" onclick="go('web')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg>Ver la web pública</button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px" id="tour-embudo">
+          <div class="hd"><h3>Embudo de inscripciones por estado</h3><span style="font-size:12px;color:var(--gray)">Toque un estado para filtrar</span></div>
+          <div class="bd"><div class="funnel" id="funnel"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h3>Solicitudes y matrículas</h3><span id="int-count" style="font-size:12px;color:var(--gray)"></span></div>
+          <div class="bd">
+            <div class="filters">
+              <div class="input"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Buscar por niño, acudiente o teléfono…" oninput="renderInscripciones()"></div>
+              <div class="chips" id="chips"></div>
+            </div>
+            <div class="table-wrap">
+              <table id="tbl-int">
+                <thead><tr><th>Niño / niña</th><th>Edad</th><th>Sala</th><th>Quién inscribe</th><th>Estado</th><th>Origen</th><th></th></tr></thead>
+                <tbody id="tb-int"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ficha -->
+        <div id="ficha" style="display:none"></div>
+      </section>
+
+      <!-- ===== PAGOS ===== -->
+      <section class="sec" id="sec-pagos">
+        <div class="page-title">
+          <div><h2>Pagos y mensualidades</h2><p>Estado de cada mensualidad y el recordatorio listo para enviar por WhatsApp.</p></div>
+          <button class="btn" onclick="abrirComunicados()">Enviar aviso general</button>
+        </div>
+
+        <div class="card" style="margin-bottom:14px" id="tour-pagos">
+          <div class="hd"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:17px;height:17px;vertical-align:-3px;color:var(--ok)"><path d="M12 8v8M8 12h8"/><circle cx="12" cy="12" r="9"/></svg> Aviso automático de vencimiento</h3><span class="pill s-aldia"><span class="dot"></span>Activo</span></div>
+          <div class="bd">
+            <div class="note" style="border-left:3px solid var(--ok)">
+              El sistema revisa las mensualidades y envía solo el recordatorio por WhatsApp <b>5 días antes</b> del vencimiento, a la familia de cada niño. Si la mensualidad se vence, se marca en rojo en el listado y vuelve a avisar. Los montos que se muestran son de ejemplo.
+            </div>
+            <div class="grid g3" style="margin-top:14px">
+              <div class="card kpi" style="box-shadow:none"><div class="n" id="pg-aldia">0</div><div class="l">Al día</div></div>
+              <div class="card kpi" style="box-shadow:none"><div class="n" id="pg-pvencer" style="color:var(--warn)">0</div><div class="l">Por vencer (≤ 5 días)</div></div>
+              <div class="card kpi" style="box-shadow:none"><div class="n" id="pg-vencido" style="color:#b23b3b">0</div><div class="l">Vencidos</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd"><h3>Mensualidades</h3><span class="vtime" style="font-size:12px;color:var(--gray)">Mes en curso · montos de ejemplo</span></div>
+          <div class="bd" id="lista-pagos"></div>
+        </div>
+        <div class="note" style="margin-top:14px">Al tocar «Enviar recordatorio por WhatsApp» se abre el chat de la familia con el mensaje ya armado. En esta demo no se envía ningún mensaje.</div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="hd"><h3>Cómo lo ve la familia (WhatsApp)</h3><span class="pill s-info"><span class="dot"></span>maqueta</span></div>
+          <div class="bd">
+            <div class="wa">
+              <div class="phone"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:16px;height:16px"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.3L3 20l1.3-5.1A8.5 8.5 0 1 1 21 11.5z"/></svg>Centro Infantil El Árbol Azul · +506 8392 3872</div>
+              <div class="thread" id="wa-thread"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ASISTENCIA ===== -->
+      <section class="sec" id="sec-asistencia">
+        <div class="page-title">
+          <div><h2>Asistencia</h2><p>Pase de lista por sala. Si un niño no llegó, el sistema avisa a la familia.</p></div>
+          <div class="card" style="padding:10px 14px;display:flex;align-items:center;gap:12px"><span style="font-size:13px;font-weight:600" id="asis-resumen"></span></div>
+        </div>
+        <div class="card" id="tour-asistencia">
+          <div class="hd"><h3>Pase de lista de hoy</h3><span class="vtime" style="font-size:12px;color:var(--gray)" id="asis-fecha"></span></div>
+          <div class="bd" id="lista-asistencia"></div>
+        </div>
+        <div class="note" style="margin-top:14px">Cuando marca a un niño como <b>ausente</b>, aparece la opción de avisar a la familia por WhatsApp para confirmar que todo está bien. En esta demo no se envía ningún mensaje.</div>
+      </section>
+
+      <!-- ===== COMUNICADOS ===== -->
+      <section class="sec" id="sec-comunicados">
+        <div class="page-title"><div><h2>Comunicados a los padres</h2><p>Un aviso general para una sala o para la familia de un niño, listo para enviar por WhatsApp.</p></div></div>
+        <div class="grid g2">
+          <div class="card" id="tour-comunicados">
+            <div class="hd"><h3>Nuevo comunicado</h3></div>
+            <div class="bd">
+              <label class="f">Para</label>
+              <select class="f" id="com-dest" onchange="renderComPreview()">
+                <option value="Todas las salas">Todas las salas (34 familias)</option>
+                <option value="Maternal">Sala Maternal (9 familias)</option>
+                <option value="Pre-kínder">Sala Pre-kínder (14 familias)</option>
+                <option value="Kínder">Sala Kínder (11 familias)</option>
+                <option value="Un niño en particular">Un niño en particular…</option>
+              </select>
+              <div id="com-nino-wrap" style="display:none">
+                <label class="f">Niño / niña</label>
+                <select class="f" id="com-nino" onchange="renderComPreview()"></select>
+              </div>
+              <label class="f">Mensaje</label>
+              <textarea class="f" id="com-msg" rows="4" oninput="renderComPreview()" placeholder="Escriba el comunicado para las familias…"></textarea>
+              <button class="btn amber" style="margin-top:16px;width:100%;justify-content:center" onclick="enviarComunicado()">Preparar el comunicado</button>
+              <div id="com-result" style="margin-top:12px"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="hd"><h3>Cómo lo verá la familia</h3><span class="pill s-info"><span class="dot"></span>maqueta</span></div>
+            <div class="bd">
+              <div class="wa">
+                <div class="phone"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:16px;height:16px"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.3L3 20l1.3-5.1A8.5 8.5 0 1 1 21 11.5z"/></svg>Centro Infantil El Árbol Azul · +506 8392 3872</div>
+                <div class="thread" id="com-thread"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="hd"><h3>Historial de comunicados</h3></div>
+          <div class="bd" id="lista-com"></div>
+        </div>
+      </section>
+
+      <!-- ===== INFORMES ===== -->
+      <section class="sec" id="sec-informes">
+        <div class="page-title"><div><h2>Informes</h2><p>Los números del centro para decidir con datos. Valores de ejemplo.</p></div></div>
+        <div class="grid g3" style="margin-bottom:14px">
+          <div class="card kpi"><div class="n" id="i-sol">0</div><div class="l">Solicitudes este mes</div></div>
+          <div class="card kpi"><div class="n" id="i-mat">0</div><div class="l">Matriculados en total</div></div>
+          <div class="card kpi"><div class="n" id="i-asist">0%</div><div class="l">Asistencia promedio</div></div>
+        </div>
+        <div class="grid g2" id="tour-informes">
+          <div class="card"><div class="hd"><h3>Solicitudes de inscripción por mes</h3></div><div class="bd"><div class="chart" id="c-meses"></div></div></div>
+          <div class="card"><div class="hd"><h3>Matriculados por sala</h3></div><div class="bd" id="c-salas"></div></div>
+          <div class="card"><div class="hd"><h3>Cobrado vs. pendiente (ejemplo)</h3></div><div class="bd" id="c-cobro"></div></div>
+          <div class="card"><div class="hd"><h3>Asistencia promedio por sala</h3></div><div class="bd" id="c-asist"></div></div>
+        </div>
+      </section>
+
+      <!-- ===== WEB PÚBLICA ===== -->
+      <section class="sec" id="sec-web">
+        <div class="pub">
+          <div class="hero">
+            <span class="tag" style="color:var(--amber)">Página pública del centro</span>
+            <h1>Centro Infantil El Árbol Azul</h1>
+            <p>Jardín maternal y centro infantil en Costa Rica. Cuidado y estimulación por edades, de lunes a viernes de 6:00 a.m. a 6:00 p.m. Para informes y pre-inscripción, escriba al +506 8392 3872.</p>
+          </div>
+          <div class="pub-wrap">
+            <h2 style="font-size:17px;margin-bottom:12px">Nuestras salas por edad</h2>
+            <div class="grid g3" style="margin-bottom:22px">
+              <div class="sala-card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v6"/><path d="M12 9c-3.5 0-6 1.6-6 4.2 0 2 1.4 3 3 3-.4 1.9.5 3.3 2 3.8"/><path d="M12 9c3.5 0 6 1.6 6 4.2 0 2-1.4 3-3 3 .4 1.9-.5 3.3-2 3.8"/></svg></div><b>Maternal</b><div class="r">0 a 2 años · primera infancia y estimulación temprana.</div></div>
+              <div class="sala-card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v6"/><path d="M12 9c-3.5 0-6 1.6-6 4.2 0 2 1.4 3 3 3-.4 1.9.5 3.3 2 3.8"/><path d="M12 9c3.5 0 6 1.6 6 4.2 0 2-1.4 3-3 3 .4 1.9-.5 3.3-2 3.8"/></svg></div><b>Pre-kínder</b><div class="r">3 a 4 años · juego, lenguaje y socialización.</div></div>
+              <div class="sala-card"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v6"/><path d="M12 9c-3.5 0-6 1.6-6 4.2 0 2 1.4 3 3 3-.4 1.9.5 3.3 2 3.8"/><path d="M12 9c3.5 0 6 1.6 6 4.2 0 2-1.4 3-3 3 .4 1.9-.5 3.3-2 3.8"/></svg></div><b>Kínder</b><div class="r">5 a 6 años · preparación para la escuela.</div></div>
+            </div>
+            <div class="grid g2" style="margin-bottom:22px">
+              <div class="card"><div class="hd"><h3>Horario</h3></div><div class="bd">
+                <div class="info-row"><span class="k">Lunes a viernes</span><span class="v">6:00 a.m. – 6:00 p.m.</span></div>
+                <div class="info-row"><span class="k">Sábados y domingos</span><span class="v">Cerrado</span></div>
+                <div class="note" style="margin-top:12px">Horario real del centro. Consultar disponibilidad por feriados.</div>
+              </div></div>
+              <div class="card"><div class="hd"><h3>Qué incluye el día</h3></div><div class="bd">
+                <div class="info-row"><span class="k">Recibimiento temprano</span><span class="v">Desde las 6:00 a.m.</span></div>
+                <div class="info-row"><span class="k">Alimentación</span><span class="v">Consultar</span></div>
+                <div class="info-row"><span class="k">Actividades por edad</span><span class="v">Por sala</span></div>
+                <div class="info-row"><span class="k">Reporte del día a la familia</span><span class="v">Por WhatsApp</span></div>
+              </div></div>
+            </div>
+            <div class="note" style="border-left:3px solid var(--warn);margin-bottom:18px"><b>Lista de espera:</b> el centro trabaja por cupos limitados por sala, por lo que puede existir lista de espera según la edad y la disponibilidad del momento. Le recomendamos anotarse con anticipación.</div>
+            <div class="card" id="tour-form">
+              <div class="hd"><h3>Solicitar informes / pre-inscripción</h3><span class="vtime" style="font-size:12px;color:var(--gray)">Respuesta por WhatsApp</span></div>
+              <div class="bd">
+                <div id="pre-form">
+                  <div class="grid g2">
+                    <div><label class="f">Nombre del niño o niña</label><input class="f" id="p-nino" placeholder="Nombre y apellidos"></div>
+                    <div><label class="f">Edad</label><input class="f" id="p-edad" placeholder="Ej.: 2 años"></div>
+                    <div><label class="f">Sala de interés</label><select class="f" id="p-sala"><option value="">Consultar por edad</option><option>Maternal (0 a 2 años)</option><option>Pre-kínder (3 a 4 años)</option><option>Kínder (5 a 6 años)</option></select></div>
+                    <div><label class="f">Quién consulta</label><input class="f" id="p-nombre" placeholder="Nombre del familiar"></div>
+                    <div><label class="f">Parentesco</label><select class="f" id="p-parentesco"><option>Madre</option><option>Padre</option><option>Encargado(a)</option><option>Otro</option></select></div>
+                    <div><label class="f">Teléfono (WhatsApp)</label><input class="f" id="p-tel" placeholder="Ej.: 8XXX XXXX"></div>
+                  </div>
+                  <label class="f">Comentarios (alergias, horario deseado, consultas)</label>
+                  <textarea class="f" id="p-obs" rows="2" placeholder="Cuéntenos qué necesita"></textarea>
+                  <button class="btn amber" style="margin-top:16px;width:100%;justify-content:center" onclick="enviarPreinscripcion()">Solicitar informes por WhatsApp</button>
+                </div>
+                <div id="pre-result" style="display:none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="foot-note">Demo de referencia hecho por Nocodeveloper. Los datos son de ejemplo.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOUR ===== -->
+<div class="tour-dim" id="tour-dim"></div>
+<div class="tour-spot" id="tour-spot" style="display:none"></div>
+<div class="tour-card" id="tour-card" style="display:none"></div>
+<button class="tour-close" id="tour-close" style="display:none" onclick="endTour()">Salir</button>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= DATOS DE EJEMPLO ================= */
+const NEGOCIO='Centro Infantil El Árbol Azul';
+const WA_NEGOCIO='50683923872';
+const WA_NEGOCIO_FMT='+506 8392 3872';
+
+const SALAS=[
+  {k:'maternal',t:'Maternal',r:'0 a 2 años'},
+  {k:'prekinder',t:'Pre-kínder',r:'3 a 4 años'},
+  {k:'kinder',t:'Kínder',r:'5 a 6 años'}
+];
+const SALA_LABEL=Object.fromEntries(SALAS.map(s=>[s.k,s.t]));
+const SALA_RANGO=Object.fromEntries(SALAS.map(s=>[s.k,s.r]));
+
+const ESTADOS=[
+  {k:'nueva',t:'Nueva'},{k:'contactada',t:'Contactada'},{k:'visita',t:'Visita agendada'},
+  {k:'admitida',t:'Admitida'},{k:'matriculada',t:'Matriculada'},{k:'espera',t:'Lista de espera'}
+];
+const ESTADO_LABEL=Object.fromEntries(ESTADOS.map(e=>[e.k,e.t]));
+
+const DOCS=['Cédula del acudiente','Partida de nacimiento','Cartilla de vacunas','Ficha médica','Foto tamaño pasaporte','Comprobante de domicilio'];
+
+const SOLICITUDES=[
+ {id:'i1',nino:'Sofía Ramírez Solano',edad:'3 años',sala:'prekinder',acudiente:'Ana Solano Vargas',parentesco:'Madre',tel:'+506 8123 4567',email:'ana.solano@example.com',inscribe:'Madre',alergias:'Ninguna',obs:'Busca horario de 6:00 a.m. a 3:00 p.m.',hermanos:true,hermanosDet:'Hermano Mateo en Maternal (aplica descuento por hermanos).',estado:'visita',origen:'Web pública',fecha:'hace 4 días',_done:3,
+  historial:[{c:'in',t:'Buenos días, quiero informes para mi hija Sofía, de 3 años.',f:'Hace 4 días'},{c:'out',t:'¡Buenos días! Con gusto. Tenemos cupo en Pre-kínder. ¿Le agendo una visita para conocer el centro?',f:'Hace 4 días'},{c:'in',t:'Sí, el jueves en la mañana. Gracias.',f:'Hace 3 días'}]},
+ {id:'i2',nino:'Mateo Ramírez Solano',edad:'2 años',sala:'maternal',acudiente:'Ana Solano Vargas',parentesco:'Madre',tel:'+506 8123 4567',email:'ana.solano@example.com',inscribe:'Madre',alergias:'Lactosa (leve)',obs:'Asiste de 6:00 a.m. a 12:00 m. Comparte familia con Sofía.',hermanos:true,hermanosDet:'Hermana Sofía en Pre-kínder (aplica descuento por hermanos).',estado:'matriculada',origen:'Referido',fecha:'hace 2 meses',_done:6,
+  historial:[{c:'in',t:'Quiero matricular también a Mateo en Maternal.',f:'Hace 2 meses'},{c:'out',t:'¡Perfecto! Queda matriculado en Maternal. Le compartimos la lista de documentos.',f:'Hace 2 meses'}]},
+ {id:'i3',nino:'Emma Jiménez Castro',edad:'1 año',sala:'maternal',acudiente:'Karla Castro Ruiz',parentesco:'Madre',tel:'+506 8234 5678',email:'karla.castro@example.com',inscribe:'Madre',alergias:'Ninguna',obs:'Primer ingreso al centro.',hermanos:false,hermanosDet:'',estado:'matriculada',origen:'Facebook',fecha:'hace 1 mes',_done:6,
+  historial:[{c:'in',t:'La vi en Facebook, ¿tienen espacio para una bebé de 1 año?',f:'Hace 1 mes'},{c:'out',t:'Sí, hay cupo en Maternal. Le enviamos la información.',f:'Hace 1 mes'}]},
+ {id:'i4',nino:'Lucas Vargas Mora',edad:'4 años',sala:'prekinder',acudiente:'Marcela Mora Blanco',parentesco:'Madre',tel:'+506 8345 6789',email:'',inscribe:'Padre',alergias:'Ninguna',obs:'Le interesa el horario completo.',hermanos:false,hermanosDet:'',estado:'matriculada',origen:'Presencial',fecha:'hace 5 semanas',_done:6,
+  historial:[{c:'in',t:'Vinimos a conocer el centro la semana pasada.',f:'Hace 5 semanas'},{c:'out',t:'¡Fue un gusto recibirlos! Lucas queda matriculado en Pre-kínder.',f:'Hace 5 semanas'}]},
+ {id:'i5',nino:'Isabella Rojas Pérez',edad:'5 años',sala:'kinder',acudiente:'Óscar Rojas Bermúdez',parentesco:'Padre',tel:'+506 8456 7890',email:'oscar.rojas@example.com',inscribe:'Padre',alergias:'Penicilina',obs:'Ingresa a Kínder para preparación escolar.',hermanos:false,hermanosDet:'',estado:'admitida',origen:'WhatsApp',fecha:'hace 6 días',_done:5,
+  historial:[{c:'in',t:'Mi hija cumple 5 años, ¿tienen cupo en Kínder?',f:'Hace 6 días'},{c:'out',t:'¡Admitida! Le enviamos la lista de documentos para completar la matrícula.',f:'Hace 5 días'}]},
+ {id:'i6',nino:'Thiago Méndez Quesada',edad:'3 años',sala:'prekinder',acudiente:'Paola Méndez Sáenz',parentesco:'Madre',tel:'+506 8567 8901',email:'',inscribe:'Madre',alergias:'Ninguna',obs:'Consultó por cupos disponibles.',hermanos:false,hermanosDet:'',estado:'nueva',origen:'Web pública',fecha:'hoy',_done:1,
+  historial:[{c:'in',t:'Buenas tardes, ¿tienen cupo para un niño de 3 años?',f:'Hoy 08:40'}]},
+ {id:'i7',nino:'Camila Araya Vega',edad:'2 años',sala:'maternal',acudiente:'José Araya Campos',parentesco:'Padre',tel:'+506 8678 9012',email:'jose.araya@example.com',inscribe:'Padre',alergias:'Ninguna',obs:'',hermanos:false,hermanosDet:'',estado:'contactada',origen:'WhatsApp',fecha:'hace 2 días',_done:2,
+  historial:[{c:'in',t:'¿Cuánto cuesta la mensualidad en Maternal?',f:'Hace 2 días'},{c:'out',t:'Le enviamos la información de tarifas y la lista de documentos.',f:'Hace 2 días'}]},
+ {id:'i8',nino:'Santiago Mora Jiménez',edad:'4 años',sala:'prekinder',acudiente:'Diana Jiménez Fallas',parentesco:'Madre',tel:'+506 8789 0123',email:'',inscribe:'Madre',alergias:'Maní (leve)',obs:'Requiere menú sin maní.',hermanos:false,hermanosDet:'',estado:'nueva',origen:'Facebook',fecha:'hoy',_done:1,
+  historial:[{c:'in',t:'Escribo por la página de Facebook, quiero informes para mi hijo.',f:'Hoy 11:15'}]},
+ {id:'i9',nino:'Valentina Chaves Rojas',edad:'5 años',sala:'kinder',acudiente:'Andrés Chaves Montero',parentesco:'Padre',tel:'+506 8890 1234',email:'andres.chaves@example.com',inscribe:'Padre',alergias:'Ninguna',obs:'Agendó visita para conocer Kínder.',hermanos:false,hermanosDet:'',estado:'visita',origen:'Web pública',fecha:'hace 3 días',_done:3,
+  historial:[{c:'in',t:'Solicité informes desde la web para mi hija de 5 años.',f:'Hace 3 días'},{c:'out',t:'Le agendamos una visita al centro para el viernes a las 9:00 a.m.',f:'Hace 2 días'}]},
+ {id:'i10',nino:'Daniel Navarro Ruiz',edad:'1 año',sala:'maternal',acudiente:'Silvia Ruiz Arguedas',parentesco:'Madre',tel:'+506 8901 2345',email:'',inscribe:'Encargada',alergias:'Ninguna',obs:'',hermanos:false,hermanosDet:'',estado:'contactada',origen:'WhatsApp',fecha:'hace 3 días',_done:2,
+  historial:[{c:'in',t:'¿Atienden bebés de 1 año? ¿Desde qué hora?',f:'Hace 3 días'},{c:'out',t:'Sí, desde las 6:00 a.m. Le compartimos los detalles.',f:'Hace 3 días'}]},
+ {id:'i11',nino:'Gabriela Solís Herrera',edad:'3 años',sala:'prekinder',acudiente:'Roberto Solís Vega',parentesco:'Padre',tel:'+506 8012 3456',email:'roberto.solis@example.com',inscribe:'Padre',alergias:'Ninguna',obs:'Admitida, a la espera de los documentos.',hermanos:false,hermanosDet:'',estado:'admitida',origen:'Referido',fecha:'hace 8 días',_done:4,
+  historial:[{c:'in',t:'Nos recomendaron el centro. Queremos inscribir a Gabriela.',f:'Hace 8 días'},{c:'out',t:'¡Admitida! Falta entregar la ficha médica y la foto.',f:'Hace 6 días'}]},
+ {id:'i12',nino:'Andrés Fonseca Barrantes',edad:'5 años',sala:'kinder',acudiente:'Natalia Barrantes Cruz',parentesco:'Madre',tel:'+506 8112 2334',email:'',inscribe:'Madre',alergias:'Ninguna',obs:'',hermanos:false,hermanosDet:'',estado:'nueva',origen:'Web pública',fecha:'hoy',_done:0,
+  historial:[{c:'in',t:'Consulté por cupos en Kínder desde la web.',f:'Hoy 09:05'}]},
+ {id:'i13',nino:'Mariana Quesada López',edad:'2 años',sala:'maternal',acudiente:'Adriana López Solano',parentesco:'Madre',tel:'+506 8223 3445',email:'',inscribe:'Madre',alergias:'Ninguna',obs:'Sin cupo por el momento; queda en lista de espera.',hermanos:false,hermanosDet:'',estado:'espera',origen:'WhatsApp',fecha:'hace 10 días',_done:2,
+  historial:[{c:'in',t:'¿Tienen espacio en Maternal?',f:'Hace 10 días'},{c:'out',t:'Por ahora no hay cupo, la anotamos en lista de espera y le avisamos.',f:'Hace 10 días'}]},
+ {id:'i14',nino:'Felipe Cordero Álvarez',edad:'4 años',sala:'prekinder',acudiente:'Marco Cordero Núñez',parentesco:'Padre',tel:'+506 8334 4556',email:'marco.cordero@example.com',inscribe:'Padre',alergias:'Ninguna',obs:'',hermanos:false,hermanosDet:'',estado:'matriculada',origen:'Presencial',fecha:'hace 6 semanas',_done:6,
+  historial:[{c:'in',t:'Queremos matricular a Felipe para este curso.',f:'Hace 6 semanas'},{c:'out',t:'¡Bienvenidos! Felipe queda matriculado en Pre-kínder.',f:'Hace 6 semanas'}]},
+ {id:'i15',nino:'Paula Cordero Mora',edad:'3 años',sala:'prekinder',acudiente:'Marcela Mora Blanco',parentesco:'Madre',tel:'+506 8345 6789',email:'',inscribe:'Madre',alergias:'Ninguna',obs:'Hermana de Lucas; misma familia.',hermanos:true,hermanosDet:'Hermano Lucas en Pre-kínder (aplica descuento por hermanos).',estado:'matriculada',origen:'Referido',fecha:'hace 3 semanas',_done:6,
+  historial:[{c:'in',t:'Quiero inscribir también a Paula.',f:'Hace 3 semanas'},{c:'out',t:'¡Listo! Paula queda matriculada en Pre-kínder.',f:'Hace 3 semanas'}]},
+ {id:'i16',nino:'Simón Araya Rojas',edad:'1 año',sala:'maternal',acudiente:'José Araya Campos',parentesco:'Padre',tel:'+506 8678 9012',email:'',inscribe:'Padre',alergias:'Ninguna',obs:'Admitido en Maternal.',hermanos:false,hermanosDet:'',estado:'admitida',origen:'WhatsApp',fecha:'hace 4 días',_done:4,
+  historial:[{c:'in',t:'Quiero inscribir a nuestro segundo hijo, Simón.',f:'Hace 5 días'},{c:'out',t:'¡Admitido! Le enviamos la lista de documentos.',f:'Hace 4 días'}]}
+];
+
+SOLICITUDES.forEach(s=>{s.docs=DOCS.map((d,i)=>({n:d,ok:i<s._done}));});
+const SOL_BY_ID=Object.fromEntries(SOLICITUDES.map(s=>[s.id,s]));
+const SALA_BY_ID=Object.fromEntries(SALAS.map(s=>[s.k,s]));
+
+/* PAGOS / mensualidades (montos de ejemplo) */
+const PAGOS=[
+  {id:'pg1',sid:'i2',mes:'Noviembre',monto:'₡95.000',vence:'30/11/2026',estado:'aldia'},
+  {id:'pg2',sid:'i3',mes:'Noviembre',monto:'₡95.000',vence:'30/11/2026',estado:'aldia'},
+  {id:'pg3',sid:'i4',mes:'Noviembre',monto:'₡110.000',vence:'27/11/2026',estado:'pvencer'},
+  {id:'pg4',sid:'i5',mes:'Noviembre',monto:'Consultar',vence:'25/11/2026',estado:'pvencer'},
+  {id:'pg5',sid:'i11',mes:'Noviembre',monto:'Consultar',vence:'18/11/2026',estado:'vencido'},
+  {id:'pg6',sid:'i14',mes:'Noviembre',monto:'₡110.000',vence:'29/11/2026',estado:'aldia'},
+  {id:'pg7',sid:'i15',mes:'Noviembre',monto:'₡110.000',vence:'22/11/2026',estado:'vencido'},
+  {id:'pg8',sid:'i16',mes:'Noviembre',monto:'₡95.000',vence:'28/11/2026',estado:'pvencer'}
+];
+const PAGO_LABEL={aldia:'Al día',pvencer:'Por vencer',vencido:'Vencido'};
+
+/* ASISTENCIA: presentes/ausentes de hoy (roster = matriculados y admitidos) */
+const ASISTENCIA={}; // sid -> true (presente) / false (ausente). Ausente por defecto: ninguno salvo los indicados.
+[['i5',false],['i16',false]].forEach(([k,v])=>ASISTENCIA[k]=v);
+
+/* COMUNICADOS (historial) */
+const COMUNICADOS=[
+  {t:'Recordatorio: taller de padres este viernes 4:00 p.m. en el centro.',dest:'Todas las salas',familias:34,fecha:'hace 3 días',estado:'enviado'},
+  {t:'Feriado: el centro permanecerá cerrado el 15 de setiembre. Retomamos el 16 con horario normal.',dest:'Todas las salas',familias:34,fecha:'hace 1 semana',estado:'enviado'},
+  {t:'Recuerden enviar la cartilla de vacunas actualizada de su hijo o hija.',dest:'Sala Maternal',familias:9,fecha:'hace 2 semanas',estado:'enviado'}
+];
+
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2600);}
+function initials(n){return n.split(' ').filter(w=>w.length>2).slice(0,2).map(w=>w[0]).join('').toUpperCase();}
+function estadoPill(e){return '<span class="pill s-'+e+'"><span class="dot"></span>'+ESTADO_LABEL[e]+'</span>';}
+function pagoPill(e){return '<span class="pill s-'+e+'"><span class="dot"></span>'+PAGO_LABEL[e]+'</span>';}
+function waLink(num,texto){return 'https://wa.me/'+num+'?text='+encodeURIComponent(texto);}
+function familiaTel(s){return (s.tel||'').replace(/[^0-9]/g,'');}
+const enrolled=()=>SOLICITUDES.filter(s=>s.estado==='matriculada'||s.estado==='admitida');
+
+/* ================= NAVEGACIÓN ================= */
+let currentSec='panel';
+function go(sec){
+  currentSec=sec;
+  $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+sec));
+  $$('#nav button[data-sec]').forEach(b=>b.classList.toggle('active',b.dataset.sec===sec));
+  $('#crumb').textContent={panel:'Centro Infantil · Costa Rica',inscripciones:'Inscripciones',pagos:'Pagos y mensualidades',asistencia:'Asistencia',comunicados:'Comunicados',informes:'Informes',web:'Web pública'}[sec]||'';
+  window.scrollTo(0,0);
+  closeSide();
+  if(sec==='inscripciones'){var _f=$('#ficha');if(_f.style.display==='block'){_f.style.display='none';$$('#sec-inscripciones > .page-title, #sec-inscripciones > .card').forEach(function(e){e.style.display='';});}}
+  if(tour.active){ if(TOUR_STEPS[tour.i].sec!==sec){ endTour(true); toast('Recorrido cerrado: cambió de sección.'); } }
+}
+function toggleSide(){$('#side').classList.toggle('open');$('#scrim').classList.toggle('on');}
+function closeSide(){$('#side').classList.remove('open');$('#scrim').classList.remove('on');}
+function enterApp(){$('#welcome').style.display='none';}
+
+/* ================= PANEL ================= */
+function renderPanel(){
+  const nuevas=SOLICITUDES.filter(s=>s.estado==='nueva').length;
+  const admitidas=SOLICITUDES.filter(s=>s.estado==='admitida').length;
+  const pvencer=PAGOS.filter(p=>p.estado==='pvencer').length;
+  const vencidos=PAGOS.filter(p=>p.estado==='vencido').length;
+  const aldia=PAGOS.filter(p=>p.estado==='aldia').length;
+  const roster=enrolled();
+  const presentes=roster.filter(s=>ASISTENCIA[s.id]!==false).length;
+  $('#k-nuevas').textContent=nuevas;
+  $('#k-matricula').textContent=admitidas;
+  $('#k-pagos').textContent=(pvencer+vencidos);
+  $('#k-pagos-t').textContent=aldia+' al día · '+pvencer+' por vencer · '+vencidos+' vencidos';
+  $('#k-asist').textContent=presentes+' / '+roster.length;
+  $('#k-asist-t').textContent='presentes en las salas';
+
+  const docs=SOLICITUDES.filter(s=>s.estado==='admitida'&&s.docs.some(d=>!d.ok)).length;
+  $('#avisos').innerHTML=[
+    {ic:'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/>',c:'var(--warn)',t:'Mensualidades por vencer',d:pvencer+' mensualidades vencen en los próximos 5 días. El recordatorio se envía solo por WhatsApp.'},
+    {ic:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',c:'var(--blue)',t:'Documentos pendientes de admisión',d:docs+' admisiones tienen documentos por entregar. El sistema avisa a la familia.'},
+    {ic:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',c:'var(--ok)',t:'Aviso de ausencia a la familia',d:'Se envía solo cuando un niño no llega al centro, desde Asistencia.'}
+  ].map(a=>'<div style="display:flex;gap:11px;align-items:flex-start"><div style="width:30px;height:30px;border-radius:8px;background:#fafbfd;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg viewBox="0 0 24 24" fill="none" stroke="'+a.c+'" stroke-width="1.9" style="width:16px;height:16px">'+a.ic+'</svg></div><div><div style="font-weight:600;font-size:13.5px">'+a.t+'</div><div style="font-size:12.5px;color:var(--gray)">'+a.d+'</div></div></div>').join('');
+
+  $('#panel-com').innerHTML=COMUNICADOS.slice(0,3).map(c=>'<div class="com-item"><div class="com-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg></div><div><div style="font-weight:600;font-size:13.5px">'+c.dest+'</div><div style="font-size:12.5px;color:var(--gray)">'+c.t.substring(0,64)+(c.t.length>64?'…':'')+'</div><div style="font-size:11.5px;color:#98a2b3;margin-top:3px">'+c.fecha+' · '+c.familias+' familias</div></div></div>').join('');
+}
+
+/* ================= INSCRIPCIONES ================= */
+let filtroEstado='todos';
+function renderChips(){
+  const counts={todos:SOLICITUDES.length};
+  ESTADOS.forEach(e=>counts[e.k]=SOLICITUDES.filter(s=>s.estado===e.k).length);
+  $('#chips').innerHTML=[{k:'todos',t:'Todos'}].concat(ESTADOS).map(c=>'<button class="chip'+(filtroEstado===c.k?' active':'')+'" onclick="setFiltro(\''+c.k+'\')">'+c.t+' ('+counts[c.k]+')</button>').join('');
+}
+function setFiltro(k){filtroEstado=k;renderInscripciones();}
+function renderEmbudo(){
+  const counts={};ESTADOS.forEach(e=>counts[e.k]=SOLICITUDES.filter(s=>s.estado===e.k).length);
+  const max=Math.max(1,...Object.values(counts));
+  $('#funnel').innerHTML=ESTADOS.map(e=>'<div class="fn" onclick="setFiltro(\''+e.k+'\')"><div class="c">'+counts[e.k]+'</div><div class="t">'+e.t+'</div><div class="bar"><i style="width:'+(counts[e.k]/max*100)+'%"></i></div></div>').join('');
+}
+function renderInscripciones(){
+  renderChips();renderEmbudo();
+  const q=($('#q').value||'').toLowerCase();
+  const rows=SOLICITUDES.filter(s=>{
+    if(filtroEstado!=='todos'&&s.estado!==filtroEstado)return false;
+    if(!q)return true;
+    return (s.nino+s.acudiente+s.tel+s.sala+s.parentesco).toLowerCase().includes(q);
+  });
+  $('#int-count').textContent=rows.length+' de '+SOLICITUDES.length+' expedientes';
+  $('#tb-int').innerHTML=rows.map(s=>'<tr onclick="openFicha(\''+s.id+'\')"><td><div style="display:flex;align-items:center;gap:9px"><span class="av" style="background:#eef1f6;color:var(--navy);font-size:11px">'+initials(s.nino)+'</span><div><div style="font-weight:600">'+s.nino+'</div><div class="vtime" style="font-size:11.5px;color:var(--gray)">'+s.tel+'</div></div></div></td><td>'+s.edad+'</td><td>'+SALA_LABEL[s.sala]+'</td><td>'+s.parentesco+'</td><td>'+estadoPill(s.estado)+'</td><td>'+s.origen+'</td><td style="color:var(--gray)">›</td></tr>').join('') || '<tr><td colspan="7" style="color:var(--gray);padding:22px">No se encontraron expedientes con ese criterio.</td></tr>';
+}
+function openFicha(id){
+  const s=SOL_BY_ID[id];
+  $('#sec-inscripciones').querySelectorAll(':scope > .page-title, :scope > .card').forEach(e=>e.style.display='none');
+  $('#ficha').style.display='block';
+  $('#ficha').innerHTML=`
+  <button class="btn sm" onclick="closeFicha()" style="margin-bottom:14px">‹ Volver al listado</button>
+  <div class="grid g2">
+    <div class="card">
+      <div class="hd"><h3>${s.nino}</h3>${estadoPill(s.estado)}</div>
+      <div class="bd">
+        <div class="info-row"><span class="k">Edad</span><span class="v">${s.edad}</span></div>
+        <div class="info-row"><span class="k">Grupo / sala</span><span class="v">${SALA_LABEL[s.sala]} · ${SALA_RANGO[s.sala]}</span></div>
+        <div class="info-row"><span class="k">Acudiente</span><span class="v">${s.acudiente} (${s.parentesco})</span></div>
+        <div class="info-row"><span class="k">Teléfono</span><span class="v">${s.tel}</span></div>
+        <div class="info-row"><span class="k">Correo</span><span class="v">${s.email||'—'}</span></div>
+        <div class="info-row"><span class="k">Quién lo inscribe</span><span class="v">${s.inscribe}</span></div>
+        <div class="info-row"><span class="k">Origen</span><span class="v">${s.origen}</span></div>
+        <div class="info-row"><span class="k">Primer contacto</span><span class="v">${s.fecha}</span></div>
+        <div style="margin-top:14px"><div class="k" style="color:var(--gray);font-size:12.5px;margin-bottom:6px">Alergias / observaciones</div>
+        <div class="note">${s.alergias}${s.obs?' · '+s.obs:''}</div></div>
+      </div>
+    </div>
+    <div class="card" id="tour-ficha">
+      <div class="hd"><h3>Documentos por entregar</h3><span class="pill s-info"><span class="dot"></span>${s.docs.filter(d=>d.ok).length}/${s.docs.length}</span></div>
+      <div class="bd">
+        ${s.docs.map(d=>'<div class="doc-row"><span class="doc-ic '+(d.ok?'doc-ok':'doc-pend')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">'+(d.ok?'<path d="M5 13l4 4L19 7"/>':'<path d="M6 6l12 12M18 6 6 18"/>')+'</svg></span><span style="flex:1">'+d.n+'</span><span style="font-size:12px;color:'+(d.ok?'var(--ok)':'#b23b3b')+'">'+(d.ok?'Entregado':'Pendiente')+'</span></div>').join('')}
+        <div class="check" style="margin-top:10px;border-top:1px dashed var(--line)"><input type="checkbox" ${s.hermanos?'checked':''} disabled><span>Aplica <b>descuento por hermanos</b>${s.hermanos?': '+s.hermanosDet:' (sin hermanos en el centro)'}.</span></div>
+        <div class="note" style="margin-top:12px">El monto del descuento se consulta con la dirección. No se muestran tarifas reales.</div>
+      </div>
+    </div>
+    <div class="card" style="grid-column:1/-1">
+      <div class="hd"><h3>Historial de la conversación</h3><span class="vtime">WhatsApp</span></div>
+      <div class="bd"><div class="chat">${s.historial.map(h=>'<div class="bub '+(h.c==='out'?'out':'in')+'">'+h.t+'<div class="tm">'+h.f+'</div></div>').join('')}</div></div>
+    </div>
+  </div>`;
+  window.scrollTo(0,0);
+  if(tour.active&&TOUR_STEPS[tour.i].target==='#tour-ficha') placeStep();
+}
+function closeFicha(){
+  $('#ficha').style.display='none';
+  $('#sec-inscripciones').querySelectorAll(':scope > .page-title, :scope > .card').forEach(e=>e.style.display='');
+  renderInscripciones();
+}
+
+/* ================= PAGOS ================= */
+function renderPagos(){
+  const aldia=PAGOS.filter(p=>p.estado==='aldia').length;
+  const pvencer=PAGOS.filter(p=>p.estado==='pvencer').length;
+  const vencidos=PAGOS.filter(p=>p.estado==='vencido').length;
+  $('#pg-aldia').textContent=aldia;
+  $('#pg-pvencer').textContent=pvencer;
+  $('#pg-vencido').textContent=vencidos;
+  $('#lista-pagos').innerHTML=PAGOS.map(p=>{
+    const s=SOL_BY_ID[p.sid];
+    return '<div class="pay-row"><div class="nm"><b>'+s.nino+'</b><span>'+s.acudiente+' · '+SALA_LABEL[s.sala]+'</span></div><div class="pay-amt">'+p.monto+'</div><div class="pay-vence">'+p.mes+' · vence '+p.vence+'</div>'+pagoPill(p.estado)+'<button class="btn sm" onclick="recordatorio(\''+p.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg>Enviar recordatorio por WhatsApp</button></div>';
+  }).join('');
+}
+function recordatorio(id){
+  const p=PAGOS.find(x=>x.id===id);const s=SOL_BY_ID[p.sid];
+  const txt='Hola '+s.acudiente+', le saludamos del '+NEGOCIO+'. Le recordamos que la mensualidad de '+s.nino+' ('+p.mes+') por '+p.monto+' vence el '+p.vence+'. Puede confirmar el pago respondiendo este mensaje. ¡Gracias!';
+  const url=waLink(familiaTel(s),txt);
+  renderWA(txt);
+  window.open(url,'_blank','noopener');
+  toast('Se abrió el chat de '+s.acudiente+' con el recordatorio.');
+}
+function renderWA(txt){
+  const th=$('#wa-thread');
+  const msg = txt || 'Hola, le recordamos que la mensualidad de su hijo o hija vence en 5 días. Puede confirmar el pago respondiendo este mensaje. ¡Gracias!';
+  th.innerHTML='<div class="msg out">'+msg+'<div class="tm">enviado ✓✓</div></div>';
+}
+
+/* ================= ASISTENCIA ================= */
+function renderAsistencia(){
+  const roster=enrolled();
+  const presentes=roster.filter(s=>ASISTENCIA[s.id]!==false).length;
+  $('#asis-resumen').textContent=presentes+' de '+roster.length+' presentes';
+  $('#asis-fecha').textContent='Datos de ejemplo · hoy';
+  $('#lista-asistencia').innerHTML=SALAS.map(sala=>{
+    const kids=roster.filter(s=>s.sala===sala.k);
+    if(!kids.length)return '';
+    const pres=kids.filter(s=>ASISTENCIA[s.id]!==false).length;
+    return '<div class="asis-sala"><div class="asis-head"><b>'+sala.t+' <span style="font-weight:400;color:var(--gray);font-size:12px">· '+sala.r+'</span></b><span>'+pres+' / '+kids.length+' presentes</span></div>'+
+      kids.map(s=>{const pres=s1=>ASISTENCIA[s1.id]!==false;const on=pres(s);
+        return '<div class="asis-row"><div class="nm"><b>'+s.nino+'</b> <span style="color:var(--gray);font-size:12px">· '+s.acudiente+'</span></div>'+
+        '<div class="tgl"><button class="'+(on?'on':'')+'" onclick="setAsis(\''+s.id+'\',true)">Presente</button><button class="'+(!on?'off':'')+'" onclick="setAsis(\''+s.id+'\',false)">Ausente</button></div>'+
+        (!on?'<button class="btn sm amber" onclick="avisarAusencia(\''+s.id+'\')">Avisar a la familia</button>':'')+
+        '</div>';}).join('')+'</div>';
+  }).join('');
+}
+function setAsis(id,v){ASISTENCIA[id]=v;renderAsistencia();renderPanel();}
+function avisarAusencia(id){
+  const s=SOL_BY_ID[id];
+  const txt='Hola '+s.acudiente+', le saludamos del '+NEGOCIO+'. Notamos que '+s.nino+' no llegó hoy al centro. ¿Se encuentra bien? Por favor confírmenos para registrar la asistencia. ¡Gracias!';
+  window.open(waLink(familiaTel(s),txt),'_blank','noopener');
+  toast('Se abrió el chat de '+s.acudiente+' para avisar la ausencia.');
+}
+
+/* ================= COMUNICADOS ================= */
+function abrirComunicados(){go('comunicados');}
+function comDestino(){
+  const v=$('#com-dest').value;
+  if(v==='Un niño en particular'){const sid=$('#com-nino').value;const s=SOL_BY_ID[sid];return {label:s?('Familia de '+s.nino):'Un niño',familias:1,tels:s?[familiaTel(s)]:[]};}
+  if(v==='Todas las salas'){return {label:'Todas las salas',familias:34};}
+  const f={'Maternal':9,'Pre-kínder':14,'Kínder':11}[v]||0;
+  return {label:'Sala '+v,familias:f};
+}
+function renderComNinos(){
+  $('#com-nino').innerHTML=SOLICITUDES.map(s=>'<option value="'+s.id+'">'+s.nino+' · '+SALA_LABEL[s.sala]+'</option>').join('');
+}
+function renderComPreview(){
+  const wrap=$('#com-nino-wrap');
+  wrap.style.display=$('#com-dest').value==='Un niño en particular'?'block':'none';
+  const msg=$('#com-msg').value||'Escriba aquí el comunicado que quiere enviar a las familias.';
+  $('#com-thread').innerHTML='<div class="msg out">'+msg+'<div class="tm">enviado ✓✓</div></div>';
+}
+function renderComHistorial(){
+  $('#lista-com').innerHTML=COMUNICADOS.map(c=>'<div class="com-item"><div class="com-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5z"/></svg></div><div style="flex:1"><div style="font-weight:600;font-size:13.5px">'+c.dest+' <span class="pill s-aldia" style="margin-left:6px"><span class="dot"></span>'+c.estado+'</span></div><div style="font-size:13px;color:var(--ink);margin-top:3px">'+c.t+'</div><div style="font-size:11.5px;color:#98a2b3;margin-top:4px">'+c.fecha+' · '+c.familias+' familias</div></div></div>').join('');
+}
+function enviarComunicado(){
+  const msg=$('#com-msg').value.trim();
+  if(!msg){toast('Escriba el mensaje del comunicado.');return;}
+  const d=comDestino();
+  COMUNICADOS.unshift({t:msg,dest:d.label,familias:d.familias,fecha:'hoy',estado:'preparado'});
+  $('#com-result').innerHTML='<div class="note" style="border-left:3px solid var(--ok)"><b>Comunicado preparado.</b> Se enviaría a '+d.label+' ('+d.familias+' familias). En esta demo no se envía ningún mensaje.</div>';
+  renderComHistorial();renderPanel();$('#com-msg').value='';renderComPreview();
+  toast('Comunicado agregado al historial.');
+}
+
+/* ================= INFORMES ================= */
+function renderInformes(){
+  const meses=[{m:'Jun',v:9},{m:'Jul',v:12},{m:'Ago',v:11},{m:'Sep',v:14},{m:'Oct',v:13},{m:'Nov',v:SOLICITUDES.length}];
+  const matriculados={maternal:0,prekinder:0,kinder:0};
+  SOLICITUDES.filter(s=>s.estado==='matriculada'||s.estado==='admitida').forEach(s=>matriculados[s.sala]++);
+  const totalMat=Object.values(matriculados).reduce((a,b)=>a+b,0);
+  $('#i-sol').textContent=SOLICITUDES.length;
+  $('#i-mat').textContent=totalMat;
+  $('#i-asist').textContent='93%';
+  $('#c-meses').innerHTML=chartBars(meses,'#2f6fb0');
+  const maxs=Math.max(1,...Object.values(matriculados));
+  $('#c-salas').innerHTML=SALAS.map(s=>'<div class="hbar-row"><span class="lb">'+s.t+'</span><span class="tr"><i style="width:'+(matriculados[s.k]/maxs*100)+'%"></i></span><span class="vl">'+matriculados[s.k]+'</span></div>').join('');
+  const cobrado=1850000,pendiente=420000;
+  const tot=cobrado+pendiente;
+  $('#c-cobro').innerHTML='<div class="hbar-row"><span class="lb">Cobrado</span><span class="tr"><i style="width:'+(cobrado/tot*100)+'%;background:linear-gradient(90deg,var(--ok),#2f6fb0)"></i></span><span class="vl">₡'+(cobrado/1000).toFixed(0)+'k</span></div><div class="hbar-row"><span class="lb">Pendiente</span><span class="tr"><i style="width:'+(pendiente/tot*100)+'%;background:linear-gradient(90deg,var(--warn),#b23b3b)"></i></span><span class="vl">₡'+(pendiente/1000).toFixed(0)+'k</span></div><div class="note" style="margin-top:12px">Montos de ejemplo. Cobrado '+Math.round(cobrado/tot*100)+'% · pendiente '+Math.round(pendiente/tot*100)+'%.</div>';
+  const asist=[{t:'Maternal',v:91},{t:'Pre-kínder',v:94},{t:'Kínder',v:95}];
+  $('#c-asist').innerHTML=asist.map(a=>'<div class="hbar-row"><span class="lb">'+a.t+'</span><span class="tr"><i style="width:'+a.v+'%;background:linear-gradient(90deg,var(--blue),#1f4d80)"></i></span><span class="vl">'+a.v+'%</span></div>').join('');
+}
+function chartBars(data,color){
+  const max=Math.max(...data.map(d=>d.v));
+  return data.map(d=>'<div class="col"><span style="font-size:11.5px;font-weight:600;color:var(--gray)">'+d.v+'</span><div class="bar" style="height:'+(d.v/max*130)+'px;background:linear-gradient(180deg,'+color+',#1f4d80)"></div><span class="cl">'+d.m+'</span></div>').join('');
+}
+
+/* ================= WEB PÚBLICA ================= */
+function enviarPreinscripcion(){
+  const nino=$('#p-nino').value.trim()||'(sin nombre)';
+  const edad=$('#p-edad').value.trim()||'a consultar';
+  const sala=$('#p-sala').value||'a consultar por edad';
+  const nombre=$('#p-nombre').value.trim()||'(sin nombre)';
+  const parentesco=$('#p-parentesco').value;
+  const tel=$('#p-tel').value.trim()||'(sin teléfono)';
+  const obs=$('#p-obs').value.trim();
+  const texto='Hola, deseo solicitar informes / pre-inscripción en el '+NEGOCIO+' para '+nino+', de '+edad+'. Sala de interés: '+sala+'. Consulta: '+nombre+' ('+parentesco+'), teléfono '+tel+'.'+(obs?' Comentarios: '+obs+'.':'')+' Quedo atento(a). Gracias.';
+  const url=waLink(WA_NEGOCIO,texto);
+  $('#pre-result').innerHTML=`
+    <div class="note" style="border-left:3px solid var(--ok)">
+      <div style="font-weight:600;color:var(--ok);margin-bottom:6px">Solicitud lista para enviar</div>
+      La solicitud de <b>${nino}</b> quedaría registrada en el sistema como una <b>solicitud nueva</b> y el centro recibe el mensaje por WhatsApp.
+    </div>
+    <label class="f">Mensaje de WhatsApp que se enviaría al ${WA_NEGOCIO_FMT}</label>
+    <div class="note" style="white-space:pre-wrap">${texto}</div>
+    <a class="btn amber" style="margin-top:14px;width:100%;justify-content:center" href="${url}" target="_blank" rel="noopener">Abrir WhatsApp con el mensaje</a>
+    <button class="btn" style="margin-top:10px;width:100%;justify-content:center" onclick="resetPre()">Volver a la solicitud</button>`;
+  $('#pre-form').style.display='none';
+  $('#pre-result').style.display='block';
+  if(tour.active){tour.active=false;var bt=$('#btn-tour');if(bt)bt.style.visibility='visible';$('#tour-spot').style.display='none';$('#tour-card').style.display='none';$('#tour-close').style.display='none';}
+}
+function resetPre(){$('#pre-form').style.display='block';$('#pre-result').style.display='none';}
+
+/* ================= RECORRIDO GUIADO ================= */
+const TOUR_STEPS=[
+  {sec:'panel',target:'#tour-nuevas',title:'Llega la solicitud y se registra sola',
+   text:'Cuando una familia escribe por la web o por WhatsApp, la solicitud se carga sola en el sistema: nadie la copia a mano. Aquí ve cuántas son nuevas y todavía hay que contactar.'},
+  {sec:'inscripciones',target:'#tour-embudo',title:'El embudo de inscripciones por estado',
+   text:'Cada solicitud avanza por estados: nueva, contactada, visita agendada, admitida, matriculada o lista de espera. Así se ve de un vistazo dónde está cada niño y qué toca hacer.'},
+  {sec:'inscripciones',target:'#tour-ficha',title:'La ficha del niño y lo que falta entregar',before(){openFicha('i1');},
+   text:'En la ficha está todo junto: los datos del niño, la sala por edad, quién lo inscribe, alergias u observaciones, y los documentos que la familia debe entregar (cédula, vacunas, ficha médica, foto).'},
+  {sec:'pagos',target:'#tour-pagos',title:'Los pagos con el aviso automático',
+   text:'El sistema revisa las mensualidades y envía solo el recordatorio por WhatsApp 5 días antes del vencimiento. Desde cada fila, el botón abre el chat de la familia con el mensaje ya armado.'},
+  {sec:'asistencia',target:'#tour-asistencia',title:'La asistencia con el aviso a la familia',
+   text:'Se pasa lista por sala y se marca presente o ausente. Si un niño no llegó, el sistema ofrece avisar a la familia por WhatsApp para confirmar que todo está bien.'},
+  {sec:'comunicados',target:'#tour-comunicados',title:'Los comunicados a los padres',
+   text:'Un aviso general para todas las salas o para la familia de un niño: se escribe una vez y el sistema muestra cómo le llegaría por WhatsApp. Queda guardado en el historial.'},
+  {sec:'web',target:'#tour-form',title:'La web pública como entrada',
+   text:'La página pública es la puerta de entrada: presenta las salas, el horario real (lunes a viernes de 6:00 a.m. a 6:00 p.m.) y el formulario de pre-inscripción, que arma el mensaje de WhatsApp al centro.'}
+];
+const tour={active:false,i:0,auto:false,autoT:null,autoStart:0,tickT:null};
+function startTour(){
+  enterApp();
+  tour.active=true;tour.i=0;
+  $('#tour-close').style.display='block';
+  var bt=$('#btn-tour'); if(bt) bt.style.visibility='hidden';
+  showStep(0);
+}
+function endTour(silent){
+  tour.active=false;stopAuto();
+  $('#tour-spot').style.display='none';$('#tour-card').style.display='none';$('#tour-close').style.display='none';
+  var bt=$('#btn-tour'); if(bt) bt.style.visibility='visible';
+  var _f=$('#ficha');if(_f&&_f.style.display==='block'){_f.style.display='none';$$('#sec-inscripciones > .page-title, #sec-inscripciones > .card').forEach(function(e){e.style.display='';});}
+  if(!silent)toast('Recorrido finalizado.');
+}
+function showStep(n){
+  tour.i=Math.max(0,Math.min(TOUR_STEPS.length-1,n));
+  const st=TOUR_STEPS[tour.i];
+  go(st.sec);
+  if(st.before)st.before();
+  tour.active=true;
+  requestAnimationFrame(()=>{setTimeout(()=>placeStep(),60);});
+  renderCard();
+}
+function renderCard(){
+  const st=TOUR_STEPS[tour.i];
+  const n=tour.i+1,tot=TOUR_STEPS.length;
+  $('#tour-card').innerHTML=`
+    <div class="step">Paso ${n} de ${tot}</div>
+    <h3>${st.title}</h3>
+    <p>${st.text}</p>
+    <div class="prog ${tour.auto?'on':''}"><i id="tour-prog"></i></div>
+    <div class="navrow">
+      <button class="btn sm" onclick="prevStep()" ${tour.i===0?'disabled style="opacity:.5"':''}>Atrás</button>
+      <button class="btn sm primary" onclick="nextStep()">${tour.i===tot-1?'Finalizar':'Siguiente'}</button>
+      <span class="sp"></span>
+      <button class="btn sm" onclick="toggleAuto()">${tour.auto?'Pausar':'Automático'}</button>
+      <button class="btn sm" onclick="endTour()">Salir</button>
+    </div>`;
+  $('#tour-card').style.display='block';
+}
+function nextStep(){if(tour.i>=TOUR_STEPS.length-1){endTour();}else{showStep(tour.i+1);}}
+function prevStep(){showStep(tour.i-1);}
+function toggleAuto(){
+  if(tour.auto){stopAuto();}
+  else{
+    tour.auto=true;tour.autoStart=Date.now();
+    var pr=$('#tour-card').querySelector('.prog'); if(pr) pr.classList.add('on');
+    tour.autoT=setInterval(()=>{ if(tour.i>=TOUR_STEPS.length-1){stopAuto();return;} showStep(tour.i+1); tour.autoStart=Date.now(); },6000);
+    tour.tickT=setInterval(()=>{const el=$('#tour-prog');if(el){const p=Math.min(100,(Date.now()-tour.autoStart)/6000*100);el.style.width=p+'%';}},100);
+    renderCard();
+  }
+}
+function stopAuto(){tour.auto=false;clearInterval(tour.autoT);clearInterval(tour.tickT);const el=$('#tour-prog');if(el){el.style.width='0';}}
+function placeStep(){
+  if(!tour.active)return;
+  const st=TOUR_STEPS[tour.i];
+  const el=document.querySelector(st.target);
+  if(!el){$('#tour-spot').style.display='none';$('#tour-card').style.left='14px';$('#tour-card').style.top='70px';return;}
+  const r=el.getBoundingClientRect();
+  const pad=8;
+  const sp=$('#tour-spot');
+  sp.style.display='block';
+  sp.style.left=(r.left-pad)+'px';
+  sp.style.top=(r.top-pad)+'px';
+  sp.style.width=(r.width+pad*2)+'px';
+  sp.style.height=(r.height+pad*2)+'px';
+  const card=$('#tour-card');
+  const cw=Math.min(380,window.innerWidth-28);
+  const ch=card.offsetHeight||210;
+  let left=r.left;
+  if(left+cw>window.innerWidth-14)left=window.innerWidth-cw-14;
+  if(left<14)left=14;
+  let top=r.bottom+14;
+  if(top+ch>window.innerHeight-14){top=Math.max(14,r.top-ch-14);}
+  card.style.left=left+'px';
+  card.style.top=top+'px';
+}
+window.addEventListener('resize',()=>{if(tour.active)placeStep();});
+window.addEventListener('scroll',()=>{if(tour.active)placeStep();},true);
+document.addEventListener('keydown',e=>{
+  if(!tour.active)return;
+  if(e.key==='ArrowRight')nextStep();
+  else if(e.key==='ArrowLeft')prevStep();
+  else if(e.key==='Escape')endTour();
+});
+
+/* ================= INIT ================= */
+function init(){
+  renderPanel();renderInscripciones();renderPagos();renderAsistencia();renderComNinos();renderComPreview();renderComHistorial();renderInformes();renderWA();
+}
+init();
+</script>
+</body>
+</html>
