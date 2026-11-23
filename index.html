@@ -618,6 +618,7 @@ function initials(n){return n.split(' ').filter(w=>w.length>2).slice(0,2).map(w=
 function estadoPill(e){return '<span class="pill s-'+e+'"><span class="dot"></span>'+ESTADO_LABEL[e]+'</span>';}
 function pagoPill(e){return '<span class="pill s-'+e+'"><span class="dot"></span>'+PAGO_LABEL[e]+'</span>';}
 function waLink(num,texto){return 'https://wa.me/'+num+'?text='+encodeURIComponent(texto);}
+function norm(s){return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 function familiaTel(s){return (s.tel||'').replace(/[^0-9]/g,'');}
 const enrolled=()=>SOLICITUDES.filter(s=>s.estado==='matriculada'||s.estado==='admitida');
 
@@ -678,11 +679,11 @@ function renderEmbudo(){
 }
 function renderInscripciones(){
   renderChips();renderEmbudo();
-  const q=($('#q').value||'').toLowerCase();
+  const q=norm($('#q').value);
   const rows=SOLICITUDES.filter(s=>{
     if(filtroEstado!=='todos'&&s.estado!==filtroEstado)return false;
     if(!q)return true;
-    return (s.nino+s.acudiente+s.tel+s.sala+s.parentesco).toLowerCase().includes(q);
+    return norm(s.nino+s.acudiente+s.tel+SALA_LABEL[s.sala]+s.parentesco+s.estado).includes(q);
   });
   $('#int-count').textContent=rows.length+' de '+SOLICITUDES.length+' expedientes';
   $('#tb-int').innerHTML=rows.map(s=>'<tr onclick="openFicha(\''+s.id+'\')"><td><div style="display:flex;align-items:center;gap:9px"><span class="av" style="background:#eef1f6;color:var(--navy);font-size:11px">'+initials(s.nino)+'</span><div><div style="font-weight:600">'+s.nino+'</div><div class="vtime" style="font-size:11.5px;color:var(--gray)">'+s.tel+'</div></div></div></td><td>'+s.edad+'</td><td>'+SALA_LABEL[s.sala]+'</td><td>'+s.parentesco+'</td><td>'+estadoPill(s.estado)+'</td><td>'+s.origen+'</td><td style="color:var(--gray)">›</td></tr>').join('') || '<tr><td colspan="7" style="color:var(--gray);padding:22px">No se encontraron expedientes con ese criterio.</td></tr>';
